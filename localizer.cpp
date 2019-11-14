@@ -40,10 +40,16 @@ using namespace std;
            0.25 0.25
 */
 vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
-	vector< vector <float> > newGrid;
-
-	// your code here
-	
+    vector< vector<float> > newGrid (grid.size(), vector <float> (grid[0].size(), 0.0));
+    int rows = grid.size();
+    int cols = grid[0].size();
+    int area = rows * cols;
+    float belief_per_cell = 1. / area;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            newGrid[i][j] = belief_per_cell;
+        }
+    }
 	return newGrid;
 }
 
@@ -84,15 +90,34 @@ vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
     @return - a normalized two dimensional grid of floats 
          representing the updated beliefs for the robot. 
 */
-vector< vector <float> > move(int dy, int dx, 
-  vector < vector <float> > beliefs,
-  float blurring) 
-{
+vector< vector <float> > move(int dy, int dx, vector < vector <float> > beliefs, float blurring) {
 
-  vector < vector <float> > newGrid;
+    vector< vector<float> > newGrid (beliefs.size(), vector <float> (beliefs[0].size(), 0.0));
+    int rows = beliefs.size();
+    int cols = beliefs[0].size();
+    int new_i;
+    int new_j;
 
-  // your code here
-
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            // The modulo operator behaves a bit different in C++ with negatives
+            // If we took it as -1 % p.size(), we'd get zero instead of four
+            // -1 + p.size() will give us what we would get from -1 % p.size in Python
+            if ((i + dy) < 0) {
+                new_i = (i + dy) + cols;
+            }
+            else {
+                new_i = (i + dy) % cols;
+            }
+            if((j + dx) < 0) {
+                new_j = (j + dx) + rows;
+            }
+            else {
+                new_j = (j + dx) % rows;
+            }
+            newGrid[new_i][new_j] = beliefs[i][j];
+        }
+    }
   return blur(newGrid, blurring);
 }
 
