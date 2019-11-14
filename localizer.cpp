@@ -159,15 +159,62 @@ vector< vector <float> > move(int dy, int dx, vector < vector <float> > beliefs,
     @return - a normalized two dimensional grid of floats 
     	   representing the updated beliefs for the robot. 
 */
-vector< vector <float> > sense(char color, 
-	vector< vector <char> > grid, 
-	vector< vector <float> > beliefs, 
-	float p_hit,
-	float p_miss) 
-{
-	vector< vector <float> > newGrid;
+vector< vector <float> > sense(
+        char color,
+	    vector< vector <char> > grid,
+	    vector< vector <float> > beliefs,
+	    float p_hit,
+	    float p_miss) {
 
-	// your code here
-
+    vector< vector<float> > newGrid (beliefs.size(), vector <float> (beliefs[0].size(), 0.0));
+    int rows = beliefs.size();
+    int cols = beliefs[0].size();
+    bool hit;
+	float sum = 0;
+	vector <float> row (cols, 0);
+    // Calculate new probabilities
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            hit = (color == grid[i][j]);
+            row[j] = beliefs[i][j] * (hit * p_hit + (1 - hit) * p_miss);
+            sum += row[j];
+        }
+        newGrid[i] = row;  // new_grid.push_back(row);
+        row.clear();
+    }
+    // Divide probabilities by the total sum
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            newGrid[i][j] /= sum;
+        }
+    }
 	return normalize(newGrid);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
