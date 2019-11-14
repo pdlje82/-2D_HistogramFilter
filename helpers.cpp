@@ -34,10 +34,18 @@ using namespace std;
 */
 vector< vector<float> > normalize(vector< vector <float> > grid) {
 	
-	vector< vector<float> > newGrid;
-
-	// todo - your code here
-
+	vector< vector<float> > newGrid (grid.size(), vector <float> (grid[0].size(), 0.0));
+    float total = 0;
+	for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[0].size(); j++) {
+            total = total + grid[i][j];
+        }
+    }
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[0].size(); j++) {
+            newGrid[i][j] = grid[i][j] / total;
+        }
+	}
 	return newGrid;
 }
 
@@ -76,9 +84,46 @@ vector< vector<float> > normalize(vector< vector <float> > grid) {
 */
 vector < vector <float> > blur(vector < vector < float> > grid, float blurring) {
 
-	vector < vector <float> > newGrid;
+	vector < vector <float> > newGrid (grid.size(), vector<float> (grid[0].size(), 0.0));
 	
-	// your code here
+	int rows = grid.size();
+	int cols = grid[0].size();
+	float center_prob = 1. - blurring;
+	float corner_prob = blurring / 12.;
+	float adjacent_prob = blurring / 6.;
+	int new_i;
+	int new_j;
+
+	vector < vector <float> > window {{corner_prob, adjacent_prob, corner_prob},
+                                      {adjacent_prob, center_prob, adjacent_prob},
+                                      {corner_prob, adjacent_prob, corner_prob}};
+
+	for (int i = 0; i < rows; i++) {
+	    for (int j = 0; j < cols; j++) {
+	        float grid_val = grid[i][j];
+	        for (int dx = -1; dx < 2; dx++) {
+	            for (int dy = -1; dy < 2; dy++) {
+	                float mult = window[dx + 1][dy + 1];
+                    // The modulo operator behaves a bit different in C++ with negatives
+                    // If we took it as -1 % p.size(), we'd get zero instead of four
+                    // -1 + p.size() will give us what we would get from -1 % p.size in Python
+                    if ((i + dy) < 0) {
+                        new_i = (i + dy) + rows;
+                    }
+                    else {
+                        new_i = (i + dy) % rows;
+                    }
+                    if((j + dx) < 0) {
+                        new_j = (j + dx) + cols;
+                    }
+                    else {
+                        new_j = (j + dx) % cols;
+                    }
+	                newGrid[new_i][new_j] += mult * grid_val;
+	            }
+	        }
+	    }
+	}
 
 	return normalize(newGrid);
 }

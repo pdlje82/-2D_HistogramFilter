@@ -3,4 +3,4 @@ project(3_Histogram_Filter)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(3_Histogram_Filter tests.cpp  tests.h)
+add_executable(3_Histogram_Filter tests.cpp)
