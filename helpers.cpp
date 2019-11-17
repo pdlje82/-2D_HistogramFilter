@@ -107,18 +107,8 @@ vector < vector <float> > blur(vector < vector < float> > grid, float blurring) 
                     // The modulo operator behaves a bit different in C++ with negatives
                     // If we took it as -1 % p.size(), we'd get zero instead of four
                     // -1 + p.size() will give us what we would get from -1 % p.size in Python
-                    if ((i + dy) < 0) {
-                        new_i = (i + dy) + rows;
-                    }
-                    else {
-                        new_i = (i + dy) % rows;
-                    }
-                    if((j + dx) < 0) {
-                        new_j = (j + dx) + cols;
-                    }
-                    else {
-                        new_j = (j + dx) % cols;
-                    }
+                    new_i = (i + dy + rows) % rows;
+                    new_j = (j + dx + cols) % cols;
 	                newGrid[new_i][new_j] += mult * grid_val;
 	            }
 	        }
