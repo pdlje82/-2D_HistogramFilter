@@ -40,9 +40,9 @@ using namespace std;
            0.25 0.25
 */
 vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
-    vector< vector<float> > newGrid (grid.size(), vector <float> (grid[0].size(), 0.0));
     int rows = grid.size();
     int cols = grid[0].size();
+    vector< vector<float> > newGrid (rows, vector <float> (cols, 0.0));
     int area = rows * cols;
     float belief_per_cell = 1. / area;
     for (int i = 0; i < rows; i++) {
@@ -103,18 +103,8 @@ vector< vector <float> > move(int dy, int dx, vector < vector <float> > beliefs,
             // The modulo operator behaves a bit different in C++ with negatives
             // If we took it as -1 % p.size(), we'd get zero instead of four
             // -1 + p.size() will give us what we would get from -1 % p.size in Python
-            if ((i + dy) < 0) {
-                new_i = (i + dy) + cols;
-            }
-            else {
-                new_i = (i + dy) % cols;
-            }
-            if((j + dx) < 0) {
-                new_j = (j + dx) + rows;
-            }
-            else {
-                new_j = (j + dx) % rows;
-            }
+            new_i = (i + dy + cols) % cols;
+            new_j = (j + dx + rows) % rows;
             newGrid[new_i][new_j] = beliefs[i][j];
         }
     }
@@ -171,9 +161,9 @@ vector< vector <float> > sense(
     int cols = beliefs[0].size();
     bool hit;
 	float sum = 0;
-	vector <float> row (cols, 0);
     // Calculate new probabilities
     for (int i = 0; i < rows; i++) {
+        vector <float> row (cols, 0);
         for (int j = 0; j < cols; j++) {
             hit = (color == grid[i][j]);
             row[j] = beliefs[i][j] * (hit * p_hit + (1 - hit) * p_miss);
@@ -190,28 +180,6 @@ vector< vector <float> > sense(
     }
 	return normalize(newGrid);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
